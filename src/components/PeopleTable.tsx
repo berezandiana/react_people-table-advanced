@@ -32,21 +32,34 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
     }
   };
 
-  const renderSortableHeader = (field: string, label: string) => (
-    <th onClick={() => handleSort(field)} style={{ cursor: 'pointer' }}>
-      {label}
-      {sortBy === field && (
-        <span className="icon is-small ml-1">
-          <i
-            className={
-              order === 'desc' ? 'fas fa-arrow-down' : 'fas fa-arrow-up'
+  const renderSortableHeader = (field: string, label: string) => {
+    const isActive = sortBy === field;
+    const arrowClass = order === 'desc' ? 'fa-arrow-down' : 'fa-arrow-up';
+
+    return (
+      <th>
+        {label}{' '}
+        <button
+          type="button"
+          onClick={() => handleSort(field)}
+          className="button is-small is-white ml-1"
+          role="button"
+          aria-label={`Sort by ${label}`}
+          tabIndex={0}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              handleSort(field);
             }
+          }}
+        >
+          <i
+            className={`fas ${isActive ? arrowClass : 'fa-sort'}`}
             aria-hidden="true"
           />
-        </span>
-      )}
-    </th>
-  );
+        </button>
+      </th>
+    );
+  };
 
   return (
     <table

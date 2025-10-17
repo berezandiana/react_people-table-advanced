@@ -21,12 +21,14 @@ export const PersonLink: React.FC<Props> = ({ personName, people }) => {
     return <>{personName}</>;
   }
 
+  const search = searchParams.toString();
+  const to = search
+    ? { pathname: `/people/${person.slug}`, search: `?${search}` }
+    : `/people/${person.slug}`;
+
   return (
     <Link
-      to={{
-        pathname: `/people/${person.slug}`,
-        search: searchParams.toString(),
-      }}
+      to={to}
       className={cn({ 'has-text-danger': person.sex === 'f' })}
       data-cy="personLink"
     >

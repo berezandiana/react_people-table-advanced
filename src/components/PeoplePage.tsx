@@ -59,14 +59,12 @@ export const PeoplePage = () => {
       const matchesQuery =
         !query ||
         person.name.toLowerCase().includes(normalizedQuery) ||
-        (person.motherName &&
-          person.motherName.toLowerCase().includes(normalizedQuery)) ||
-        (person.fatherName &&
-          person.fatherName.toLowerCase().includes(normalizedQuery));
+        person.motherName?.toLowerCase().includes(normalizedQuery) ||
+        person.fatherName?.toLowerCase().includes(normalizedQuery);
 
       const matchesCentury =
         centuries.length === 0 ||
-        centuries.includes(String(Math.ceil(person.born / 100)));
+        centuries.includes(String(Math.floor(person.born / 100) + 1));
 
       const matchesSex = !sex || person.sex === sex;
 
@@ -81,7 +79,18 @@ export const PeoplePage = () => {
       const bValue = b[sortBy] ?? '';
       const direction = order === 'desc' ? -1 : 1;
 
-      return aValue > bValue ? direction : -direction;
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return aValue.localeCompare(bValue) * direction;
+      }
+
+      const aNum = aValue ?? 0;
+      const bNum = bValue ?? 0;
+
+      if (aNum === bNum) {
+        return 0;
+      }
+
+      return aNum > bNum ? direction : -direction;
     });
 
   return (

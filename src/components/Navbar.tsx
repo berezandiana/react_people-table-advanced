@@ -8,6 +8,11 @@ export const Navbar = () => {
   const isHome = location.pathname === '/';
   const isPeople = location.pathname.startsWith('/people');
 
+  const search = searchParams.toString();
+  const peopleLink = search
+    ? { pathname: '/people', search: `?${search}` }
+    : '/people';
+
   return (
     <nav
       data-cy="nav"
@@ -30,7 +35,7 @@ export const Navbar = () => {
             className={cn('navbar-item', {
               'has-background-grey-lighter': isPeople,
             })}
-            to={{ pathname: '/people', search: searchParams.toString() }}
+            to={peopleLink}
           >
             People
           </Link>
