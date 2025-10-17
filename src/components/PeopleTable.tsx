@@ -38,7 +38,7 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
 
     return (
       <th>
-        {label}{' '}
+        {label}
         <button
           type="button"
           onClick={() => handleSort(field)}
