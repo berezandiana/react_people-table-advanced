@@ -17,8 +17,14 @@ export const PeoplePage = () => {
   const query = searchParams.get('query') || '';
   const centuries = searchParams.getAll('centuries');
   const sex = searchParams.get('sex');
-  const sortBy = searchParams.get('sort') as keyof Person | null;
-  const order = searchParams.get('order');
+  const sortBy = searchParams.get('sort');
+  const order = searchParams.get('order') === 'desc' ? 'desc' : 'asc';
+  const allowedSortFields: (keyof Person)[] = ['name', 'sex', 'born', 'died'];
+  const sortField: keyof Person | null = allowedSortFields.includes(
+    sortBy as keyof Person,
+  )
+    ? (sortBy as keyof Person)
+    : null;
 
   useEffect(() => {
     const fetchPeople = async () => {
@@ -75,22 +81,37 @@ export const PeoplePage = () => {
         return 0;
       }
 
-      const aValue = a[sortBy] ?? '';
-      const bValue = b[sortBy] ?? '';
       const direction = order === 'desc' ? -1 : 1;
 
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return aValue.localeCompare(bValue) * direction;
+      if (sortField === 'name' || sortField === 'sex') {
+        const aVal = String(a[sortField] ?? '').toLowerCase();
+        const bVal = String(b[sortField] ?? '').toLowerCase();
+
+        if (aVal === bVal) {
+          return 0;
+        }
+
+        return aVal.localeCompare(bVal) * direction;
       }
 
-      const aNum = aValue ?? 0;
-      const bNum = bValue ?? 0;
+      if (sortField === 'born' || sortField === 'died') {
+        const aNum =
+          typeof a[sortField] === 'number'
+            ? a[sortField]!
+            : Number.POSITIVE_INFINITY;
+        const bNum =
+          typeof b[sortField] === 'number'
+            ? b[sortField]!
+            : Number.POSITIVE_INFINITY;
 
-      if (aNum === bNum) {
-        return 0;
+        if (aNum === bNum) {
+          return 0;
+        }
+
+        return aNum > bNum ? direction : -direction;
       }
 
-      return aNum > bNum ? direction : -direction;
+      return 0;
     });
 
   return (
